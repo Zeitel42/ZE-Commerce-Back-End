@@ -34,11 +34,10 @@ router.get("/:id", async (req, res) => {
 // create new product
 router.post("/", async (req, res) => {
   try {
-    await Product.findByIdAndUpdate(req.params.id, req.body).then((product) =>
-      res.join({ msg: "Updated successfully" })
-    );
+    const productData = await Product.create(req.body);
+    res.status(200).json(productData);
   } catch (err) {
-    res.status(500).json(err);
+    res.status(400).json(err);
   }
 });
 /* req.body should look like this...
@@ -51,18 +50,33 @@ router.post("/", async (req, res) => {
   */
 
 // update product
-router.put("/:id", (req, res) => {
+router.put("/:id", async (req, res) => {
   // update product data
   try {
-    const categoryData = await.create(req.body);
-    res.status(200).json(categoryData);
-  } catch (err) {
-    res.status(400).json(err);
+    const productData = await Product.update(req.body, {
+      where: {
+        id: req.params.id,
+      },
+    });
+
+    res.status(200).json(productData);
+  } catch (error) {
+    res.status(500).json(error);
   }
 });
 
-router.delete("/:id", (req, res) => {
+router.delete("/:id", async (req, res) => {
   // delete one product by its `id` value
+  try {
+    const productData = await Product.destroy({
+      where: {
+        id: req.params.id,
+      },
+    });
+    res.status(200).json(productData);
+  } catch (error) {
+    res.status(500).json(error);
+  }
 });
 
 module.exports = router;
